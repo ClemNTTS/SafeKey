@@ -3,23 +3,9 @@ import os
 
 def getDB(db_name:str)->dict:
   dic = {}
-  if os.path.exists("data/"+db_name+".db") == False:
-    f = open("data/"+db_name+".db","w")
-    f.close()
-    
-    conn = sqlite3.connect("data/"+db_name+".db")
-    curs = conn.cursor()
-    curs.execute('''
-    CREATE TABLE IF NOT EXISTS key_table(
-                id INTEGER PRIMARY KEY,
-                key TEXT NOT NULL,
-                value TEXT NOT NULL
-                )'''
-    )
-    print("No file",db_name+".db","found.\n","\r"+db_name+".db","as been created.")
-    conn.close()
+  if not os.path.exists("data/"+db_name+".db"):
+    print("No data base named "+db_name)
     return dic
-  
   else:
     conn = sqlite3.connect("data/"+db_name+".db")
     curs = conn.cursor()
@@ -33,6 +19,9 @@ def getDB(db_name:str)->dict:
     return dic  
 
 def addToDB(db_name:str, key,value:str):
+  if not os.path.exists("data/"+db_name+".db"):
+    print("No table named",db_name,"found.")
+    return
   conn = sqlite3.connect("data/"+db_name+".db")
   cursor = conn.cursor()
 
@@ -42,3 +31,42 @@ def addToDB(db_name:str, key,value:str):
 
   conn.commit()
   conn.close()
+
+def deleteKey(db_name:str, key:str):
+  if not os.path.exists("data/"+db_name+".db"):
+    print(f"No table named "+db_name+" found at data/"+db_name+".db")
+    return
+  
+  conn = sqlite3.connect("data/"+db_name+".db")
+  cursor = conn.cursor()
+
+  cursor.execute("SELECT * FROM key_table WHERE key = ?", (key,))
+  row = cursor.fetchone()
+
+  if row:
+    cursor.execute("DELETE FROM key_table WHERE key = ?", (key,))
+    conn.commit()
+    print(f"{row[1]} deleted.")
+  else :
+    print(f"No element corresponding to {row[1]}")  
+
+def createDB(db_name:str)->bool:
+  if not os.path.exists("data/"+db_name+".db"):
+    f = open("data/"+db_name+".db","w")
+    f.close()
+    
+    conn = sqlite3.connect("data/"+db_name+".db")
+    curs = conn.cursor()
+    curs.execute('''
+    CREATE TABLE IF NOT EXISTS key_table(
+                id INTEGER PRIMARY KEY,
+                key TEXT NOT NULL,
+                value TEXT NOT NULL
+                )'''
+    )
+    print(db_name,"as been created.")
+    conn.close()
+    return False
+  else:
+    print(db_name+" already exist :)")
+    return True  
