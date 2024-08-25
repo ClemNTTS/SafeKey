@@ -44,20 +44,23 @@ def decryptData(password:str, ciphertext_and_tag:bytes)->bytes:
      raise ValueError("Mauvais mdp ou fichier corrompu")
 
 
-# Exemple d'utilisation
+# TESTS
 mot_de_passe = input("Mdp : ")
 fichier_clair = b"Ceci est le contenu du fichier."
 
-# Chiffrement
+# Encrypt
 fichier_chiffre = encryptData(mot_de_passe, fichier_clair)
 print("Fichier chiffré :", fichier_chiffre,"\n")
 
+#Decrypt with wrong password
 try:
     fichier_dechiffre = decryptData("petitchat", fichier_chiffre)
     print("Fichier déchiffré :", fichier_dechiffre)
 except ValueError as e:
     print(e)
 
+
+#Decrypt with right password
 try:
     fichier_dechiffre = decryptData(mot_de_passe, fichier_chiffre)
     print("Fichier déchiffré :", fichier_dechiffre)
